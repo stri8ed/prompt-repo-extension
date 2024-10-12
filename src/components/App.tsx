@@ -106,7 +106,7 @@ export default function App({ show, onClose, config } : AppProps) {
         <div className="flex items-center p-5">
           {files.length > 0 && <BackButton onClick={() => setFiles([])} />}
           <div className="flex-grow flex">
-            <h3 className="text-lg font-medium ml-2">{files.length ? 'Select files': 'Select Repository'}</h3>
+            <h3 className="text-lg font-medium ml-2">{files.length ? 'Select files': 'Import Repository'}</h3>
           </div>
           <CloseButton onClick={close} />
         </div>
@@ -127,7 +127,7 @@ export default function App({ show, onClose, config } : AppProps) {
                    value={url}
                    tabIndex={0}
                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-3"
-                   placeholder="http://github.com"
+                   placeholder="http://github.com/"
                    required
             />
             <Button onClick={downloadRepo}>Submit</Button>
