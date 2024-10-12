@@ -21,7 +21,7 @@ type AppProps = {
 }
 
 export default function App({ show, onClose, config } : AppProps) {
-  const [url, setUrl] = useState('https://github.com/SYSTRAN/faster-whisper');
+  const [url, setUrl] = useState('');
   const [files, setFiles] = useState<FileInfo[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
