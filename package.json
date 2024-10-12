@@ -1,0 +1,37 @@
+{
+  "name": "subtitle-extractor-extension",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --mode production",
+    "build:dev": "vite build --mode development",
+    "dev": "vite",
+    "package": "npm run build && cd dist && zip -r -FS ../package.zip * -x '*.zip'"
+  },
+  "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@headlessui/react": "^1.7.18",
+    "@vitejs/plugin-react": "^4.3.2",
+    "@zip.js/zip.js": "^2.7.52",
+    "axios": "^1.7.7",
+    "marked": "^14.1.2",
+    "react-checkbox-tree": "^1.8.0",
+    "react-hot-toast": "^2.4.1"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0-beta.25",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@types/chrome": "^0.0.237",
+    "@types/node": "^22.5.5",
+    "@types/react": "^18.3.8",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "rollup": "^4.24.0",
+    "tailwindcss": "^3.4.12",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.9"
+  }
+}

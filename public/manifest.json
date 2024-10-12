@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Prompt Repo - ChatGPT & Claude",
+  "version": "1.0.0",
+  "description": "Convert GitHub repos to AI chat prompts. Select files, feed content to ChatGPT and Claude.",
+  "permissions": [],
+  "background": {
+    "service_worker": "src/background.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*", "https://claude.ai/*"],
+      "js": ["src/content-scripts/index.tsx"]
+    }
+  ],
+  "host_permissions": [
+    "https://github.com/*",
+    "https://render.githubusercontent.com/*",
+    "https://codeload.github.com/*"
+  ],
+  "web_accessible_resources": [],
+  "icons": {
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  }
+}
