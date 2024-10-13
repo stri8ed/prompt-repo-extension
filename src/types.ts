@@ -1,4 +1,12 @@
 
+declare global {
+  interface ImportMeta {
+    readonly env: {
+      MODE: 'development' | 'production';
+    }
+  }
+}
+
 export enum RequestType {
   LoadRepo = 'load-repo',
   CompilePrompt = 'compile-prompt',
