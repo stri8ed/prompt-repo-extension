@@ -12,20 +12,28 @@ export function simulateFileSelection(fileInput: HTMLInputElement, fileName: str
   fileInput.dispatchEvent(event);
 }
 
-export function observeElement(selectors: string[], callback: (element: Element, selector: string) => void): () => void {
+export function observeElement(
+  selectors: string[],
+  callback: (element: Element, selector: string, isAdded: boolean) => void
+): () => void {
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       if (mutation.type === 'childList') {
-        for (const node of mutation.addedNodes) {
-          if (node instanceof Element) {
-            selectors.forEach(s => {
-              if (node.matches(s)) {
-                callback(node, s);
-              }
-              node.querySelectorAll(s).forEach(el => callback(el, s));
-            })
-          }
-        }
+        const handleNodes = (nodes: NodeList, isAdded: boolean) => {
+          nodes.forEach(node => {
+            if (node instanceof Element) {
+              selectors.forEach(s => {
+                if (node.matches(s)) {
+                  callback(node, s, isAdded);
+                }
+                node.querySelectorAll(s).forEach(el => callback(el, s, isAdded));
+              });
+            }
+          });
+        };
+
+        handleNodes(mutation.addedNodes, true);
+        handleNodes(mutation.removedNodes, false);
       }
     }
   });
@@ -34,7 +42,8 @@ export function observeElement(selectors: string[], callback: (element: Element,
     childList: true,
     subtree: true
   });
-  selectors.forEach(s => document.querySelectorAll(s).forEach(el => callback(el, s)));
+
+  selectors.forEach(s => document.querySelectorAll(s).forEach(el => callback(el, s, true)));
   return () => observer.disconnect();
 }
 

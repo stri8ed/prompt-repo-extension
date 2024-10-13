@@ -20,8 +20,10 @@ export function initializeChatGPT(config: SiteConfig) {
   (async () => {
     renderApp(false);
     let button: Element|null = null;
-    observeElement(config.buttonTargetSelector, el => {
-      el = document.querySelector(config.buttonTargetSelector[0]) || el; // Default to first selector if it exists
+    observeElement(config.buttonTargetSelector, _ => {
+      const primary = document.querySelector(config.buttonTargetSelector[0]);
+      const secondary = document.querySelector(config.buttonTargetSelector[1]);
+      const el = (primary || secondary)!;
       if(button) {
         button.remove();
       }
