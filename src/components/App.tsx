@@ -10,7 +10,7 @@ import CloseButton from "@/components/CloseButton.tsx";
 import PreviewModal from "@/components/PreviewModal.tsx";
 import toast, {Toaster} from "react-hot-toast";
 import {SiteConfig} from "@/config/siteConfig.ts";
-import {simulateFileDrop} from "@/utils/domUtils.tsx";
+import {simulateFileSelection} from "@/utils/domUtils.tsx";
 import {marked} from "marked";
 import BackButton from "@/components/BackButton.tsx";
 
@@ -77,11 +77,12 @@ export default function App({ show, onClose, config } : AppProps) {
     try {
       setErrorMessage('');
       const { compiledText } = await sendMessage(RequestType.CompilePrompt, { fileNames: selectedFiles, url })
-      const target = document.querySelector(config.inputSelector)!;
-      if(config.canDragAndDrop()) {
-        simulateFileDrop(target, 'repo.txt', compiledText);
+      const textInput = document.querySelector(config.inputSelector)!
+      const fileInput = document.querySelector(config.fileInputSelector) as HTMLInputElement | null;
+      if(fileInput) {
+        simulateFileSelection(fileInput, 'repo.txt', compiledText);
       } else {
-        target.innerHTML = marked.parse(compiledText) as string
+        textInput.innerHTML = marked.parse(compiledText) as string
       }
       onClose()
     } catch (e: any) {

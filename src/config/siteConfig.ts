@@ -4,7 +4,7 @@ export interface SiteConfig {
   urlPattern: RegExp;
   buttonTargetSelector: string[];
   inputSelector: string;
-  canDragAndDrop: () => boolean;
+  fileInputSelector: string;
 }
 
 const siteConfigs: SiteConfig[] = [
@@ -13,14 +13,14 @@ const siteConfigs: SiteConfig[] = [
     inputSelector: '#prompt-textarea',
     urlPattern: /chatgpt/,
     buttonTargetSelector: ['[aria-label="Attach files"]', '[data-testid="send-button"]'],
-    canDragAndDrop: () => document.querySelector('[aria-label*="o1-preview"]') === null
+    fileInputSelector: '[type="file"]'
   },
   {
     name: 'Claude',
     urlPattern: /claude/,
     buttonTargetSelector: ['[aria-label="Capture screenshot"]'],
     inputSelector: '[contenteditable="true"]',
-    canDragAndDrop: () => false
+    fileInputSelector: '[type="file"]'
   }
 ];
 

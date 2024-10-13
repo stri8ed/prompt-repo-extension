@@ -3,27 +3,13 @@ import {SiteConfig} from "@/config/siteConfig.ts";
 import {createRoot, Root} from "react-dom/client";
 import App from "@/components/App.tsx";
 
-export function simulateFileDrop(targetElement: Element, fileName: string, content: string) {
-  const dragOverEvent = new Event('dragover', {
-    bubbles: true,
-    cancelable: true,
-  });
-  targetElement.dispatchEvent(dragOverEvent);
-
-  const syntheticFile = new File([content], fileName, {
-    type: "text/plain"
-  });
-
-  let dataTransfer = new DataTransfer()
-  dataTransfer.items.add(syntheticFile)
-
-  const dropEvent = new DragEvent('drop', {
-    dataTransfer,
-    bubbles: true,
-    cancelable: true,
-  });
-
-  targetElement.dispatchEvent(dropEvent);
+export function simulateFileSelection(fileInput: HTMLInputElement, fileName: string, content: string) {
+  const file = new File([content], fileName, { type: 'text/plain' });
+  const dataTransfer = new DataTransfer();
+  dataTransfer.items.add(file);
+  fileInput.files = dataTransfer.files;
+  const event = new Event('change', { bubbles: true });
+  fileInput.dispatchEvent(event);
 }
 
 export function observeElement(selectors: string[], callback: (element: Element, selector: string) => void): () => void {
