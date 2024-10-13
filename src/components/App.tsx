@@ -76,13 +76,13 @@ export default function App({ show, onClose, config } : AppProps) {
   const submitFileNames = async () => {
     try {
       setErrorMessage('');
-      const { compiledText } = await sendMessage(RequestType.CompilePrompt, { fileNames: selectedFiles, url })
+      const { content, root } = await sendMessage(RequestType.CompilePrompt, { fileNames: selectedFiles, url })
       const textInput = document.querySelector(config.inputSelector)!
       const fileInput = document.querySelector(config.fileInputSelector) as HTMLInputElement | null;
       if(fileInput) {
-        simulateFileSelection(fileInput, 'repo.txt', compiledText);
+        simulateFileSelection(fileInput, `${root}.txt`, content);
       } else {
-        textInput.innerHTML = marked.parse(compiledText) as string
+        textInput.innerHTML = marked.parse(content) as string
       }
       onClose()
     } catch (e: any) {
@@ -91,8 +91,8 @@ export default function App({ show, onClose, config } : AppProps) {
   }
 
   const preview = async () => {
-    const { compiledText } = await sendMessage(RequestType.CompilePrompt, { fileNames: selectedFiles, url })
-    setPrompt(compiledText)
+    const { content } = await sendMessage(RequestType.CompilePrompt, { fileNames: selectedFiles, url })
+    setPrompt(content)
     setShowPreview(true)
   }
 

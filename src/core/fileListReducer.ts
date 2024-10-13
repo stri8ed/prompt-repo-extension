@@ -32,7 +32,7 @@ function generateFolderStructure(files: FileContents): string {
   return "```\n" + stringifyStructure(structure) + "```";
 }
 
-export default function fileListReducer(files: FileContents): string {
+export default function fileListReducer(files: FileContents) {
   const projectName = Object.keys(files)[0].split('/')[0];
   let content = `# Codebase: ${projectName}\n\n`;
 
@@ -50,5 +50,5 @@ export default function fileListReducer(files: FileContents): string {
     content += "\n```\n\n";
   }
 
-  return content.trim();
+  return { content: content.trim(), root: projectName };
 }

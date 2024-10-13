@@ -25,7 +25,7 @@ export interface MessageMap {
   };
   [RequestType.CompilePrompt]: {
     request: { fileNames: string[], url: string };
-    response: { compiledText: string };
+    response: { content: string, root: string };
   };
   [RequestType.Ping]: {
     request: {};

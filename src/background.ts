@@ -36,8 +36,8 @@ addMessageListener(RequestType.CompilePrompt, async ({ fileNames, url }, sender)
   const entries = await extractor.getEntries();
   const filteredEntries = entries.filter(e => fileNames.includes(e.filename));
   const contents = await extractor.getFileContents(filteredEntries);
-  const text = fileListReducer(contents);
-  return { compiledText: text };
+  const result = fileListReducer(contents);
+  return result;
 });
 
 addMessageListener(RequestType.Ping, async ({}, _) => {
