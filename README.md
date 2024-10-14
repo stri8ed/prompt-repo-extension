@@ -1,4 +1,4 @@
-# Prompt Repo Chrome Extension
+# [Prompt Repo Chrome Extension](https://chromewebstore.google.com/detail/prompt-repo-chatgpt-claud/lpegdanocddkmegogcmgiglaacjalefh)
 
 Convert GitHub repos to AI chat input. Select files, feed content to ChatGPT and Claude.
 
