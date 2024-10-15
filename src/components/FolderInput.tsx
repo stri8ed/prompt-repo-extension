@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 
 export type FolderInputProps = {
   onSelect: (directory: FileSystemDirectoryHandle) => void;
@@ -9,8 +9,14 @@ export type FolderInputProps = {
 
 export default function FolderInput({ onSelect, onErrorMessage }: FolderInputProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const dropZoneRef = useRef<HTMLDivElement>(null);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
@@ -19,7 +25,9 @@ export default function FolderInput({ onSelect, onErrorMessage }: FolderInputPro
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(false);
+    if (dropZoneRef.current && !dropZoneRef.current.contains(e.relatedTarget as Node)) {
+      setIsDragging(false);
+    }
   }, []);
 
   const handleDrop = useCallback(
@@ -56,13 +64,44 @@ export default function FolderInput({ onSelect, onErrorMessage }: FolderInputPro
     }
   };
 
+  useEffect(() => {
+    const dropZone = dropZoneRef.current;
+    if (!dropZone) return;
+
+    const handleDocumentDragOver = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const handleDocumentDrop = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Check if the drop occurred inside our drop zone
+      if (dropZone.contains(e.target as Node)) {
+        handleDrop(e as unknown as React.DragEvent);
+      }
+    };
+
+    document.addEventListener('dragover', handleDocumentDragOver, false);
+    document.addEventListener('drop', handleDocumentDrop, false);
+
+    return () => {
+      document.removeEventListener('dragover', handleDocumentDragOver, false);
+      document.removeEventListener('drop', handleDocumentDrop, false);
+    };
+  }, [handleDrop]);
+
   return (
-    <div className="flex items-center justify-center w-full mb-4">
+    <div
+      ref={dropZoneRef}
+      className="flex items-center justify-center w-full mb-4"
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+    >
       <label
         onClick={selectDirectory}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
         className={`
           transition-all
           flex flex-col items-center justify-center w-full h-28 
