@@ -1,7 +1,7 @@
 import { FileInfo } from "@/types.ts";
 import {isTextFile} from "@/utils/fileUtils.ts";
 
-const EXCLUDE_DIRS = ['node_modules', 'bin', 'vendor'];
+const EXCLUDE_DIRS = ['node_modules', 'bin', 'vendor', '.git', 'vendor', 'venv'];
 
 export default class LocalFileProvider {
   private rootHandle: FileSystemDirectoryHandle | null = null;
@@ -39,7 +39,6 @@ export default class LocalFileProvider {
           });
         }
       } else if (handle.kind === "directory") {
-        // Check if the directory is in the root and should be excluded
         if (path === "" && EXCLUDE_DIRS.includes(name)) {
           continue;
         }
