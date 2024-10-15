@@ -5,12 +5,8 @@ import {RequestType} from "@/types.ts";
 import {getDownloadUrl, getPrimaryBranch, parseGitHubUrl} from "@/utils/githubUtils.ts";
 
 const repoExtractors = new Map<string, RepoFileProvider>();
-const isDev = import.meta.env.MODE === 'development';
 
 async function getRepoUrl(url: string) {
-  if(isDev) {
-    return chrome.runtime.getURL('example.zip');
-  }
   const repo = parseGitHubUrl(url);
   const branch = await getPrimaryBranch(repo);
   return getDownloadUrl(repo, branch);
