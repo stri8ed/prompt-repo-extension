@@ -35,8 +35,6 @@ export default function FolderInput({ onSelect, onErrorMessage }: FolderInputPro
             const handle = await item.getAsFileSystemHandle();
             if (handle && handle.kind === "directory") {
               onSelect(handle as FileSystemDirectoryHandle);
-            } else {
-              onErrorMessage?.("Please drop a folder, not a file.");
             }
           } catch (error: any) {
             onErrorMessage?.(error.message);
@@ -66,8 +64,9 @@ export default function FolderInput({ onSelect, onErrorMessage }: FolderInputPro
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={`
+          transition-all
           flex flex-col items-center justify-center w-full h-28 
-          border-2 border-dashed rounded-lg cursor-pointer transition-colors
+          border-2 border-dashed rounded-lg cursor-pointer
           ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:bg-gray-50"}
         `}
       >
@@ -77,7 +76,7 @@ export default function FolderInput({ onSelect, onErrorMessage }: FolderInputPro
             icon={faFolderPlus}
           />
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {isDragging ? "Drop folder here" : "Select or drop a local directory"}
+            Select or drop a local directory
           </p>
         </div>
       </label>

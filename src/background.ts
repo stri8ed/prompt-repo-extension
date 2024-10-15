@@ -8,7 +8,7 @@ const repoExtractors = new Map<string, RepoFileProvider>();
 const isDev = import.meta.env.MODE === 'development';
 
 async function getRepoUrl(url: string) {
-  if(!isDev) {
+  if(isDev) {
     return chrome.runtime.getURL('example.zip');
   }
   const repo = parseGitHubUrl(url);

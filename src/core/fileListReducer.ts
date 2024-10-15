@@ -32,6 +32,10 @@ function generateFolderStructure(files: FileContents): string {
   return "```\n" + stringifyStructure(structure) + "```";
 }
 
+function escapeBackticks(content: string): string {
+  return content.replace(/`/g, '\\`');
+}
+
 export default function fileListReducer(files: FileContents) {
   const projectName = Object.keys(files)[0].split('/')[0];
   let content = `# Codebase: ${projectName}\n\n`;
@@ -42,11 +46,14 @@ export default function fileListReducer(files: FileContents) {
   content += "## File Contents\n\n";
 
   for (const [filePath, fileContent] of Object.entries(files)) {
+    if(fileContent.trim().length === 0) {
+      continue;
+    }
     const pathParts = filePath.split('/');
     const fileName = pathParts.slice(1).join('/');
     content += `### ${fileName}\n`;
     content += "```\n";
-    content += fileContent;
+    content += escapeBackticks(fileContent);
     content += "\n```\n\n";
   }
 

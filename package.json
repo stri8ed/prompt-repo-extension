@@ -13,6 +13,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@headlessui/react": "^1.7.18",
+    "@tailwindcss/typography": "^0.5.15",
     "@vitejs/plugin-react": "^4.3.2",
     "@zip.js/zip.js": "^2.7.52",
     "axios": "^1.7.7",
