@@ -113,8 +113,7 @@ export default function App({ show, onClose, config } : AppProps) {
 
   return (
     <div>
-      <Modal show={show} onClose={() => {
-      }}>
+      <Modal show={show} onClose={onClose}>
         <div className="flex items-center p-5">
           {files.length > 0 && <BackButton onClick={() => setFiles([])} />}
           <div className="flex-grow flex">
