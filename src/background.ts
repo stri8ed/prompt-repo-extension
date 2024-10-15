@@ -1,14 +1,14 @@
-import RepoExtractor from "@/core/RepoExtractor.ts";
+import RepoFileProvider from "@/core/RepoFileProvider.ts";
 import fileListReducer from "@/core/fileListReducer.ts";
 import {addMessageListener} from "@/utils/messaging.ts";
 import {RequestType} from "@/types.ts";
 import {getDownloadUrl, getPrimaryBranch, parseGitHubUrl} from "@/utils/githubUtils.ts";
 
-const repoExtractors = new Map<string, RepoExtractor>();
+const repoExtractors = new Map<string, RepoFileProvider>();
 const isDev = import.meta.env.MODE === 'development';
 
 async function getRepoUrl(url: string) {
-  if(isDev) {
+  if(!isDev) {
     return chrome.runtime.getURL('example.zip');
   }
   const repo = parseGitHubUrl(url);
@@ -20,7 +20,7 @@ addMessageListener(RequestType.LoadRepo, async ({ url }, sender) => {
   const repoUrl = await getRepoUrl(url);
   let extractor = repoExtractors.get(url);
   if(!extractor) {
-    extractor = new RepoExtractor(repoUrl);
+    extractor = new RepoFileProvider(repoUrl);
     repoExtractors.set(url, extractor);
     await extractor.loadContents();
   }
@@ -36,8 +36,7 @@ addMessageListener(RequestType.CompilePrompt, async ({ fileNames, url }, sender)
   const entries = await extractor.getEntries();
   const filteredEntries = entries.filter(e => fileNames.includes(e.filename));
   const contents = await extractor.getFileContents(filteredEntries);
-  const result = fileListReducer(contents);
-  return result;
+  return fileListReducer(contents);
 });
 
 addMessageListener(RequestType.Ping, async ({}, _) => {

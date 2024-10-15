@@ -1,7 +1,7 @@
 import {BlobReader, Entry, getMimeType, TextWriter, ZipReader} from "@zip.js/zip.js";
 import axios from "axios";
 
-export default class RepoExtractor {
+export default class RepoFileProvider {
   private readonly url: string;
   private reader: ZipReader<any> | null = null;
 

@@ -1,7 +1,7 @@
 import GithubIcon from "@/components/GithubIcon.tsx";
 import {SiteConfig} from "@/config/siteConfig.ts";
 import {createRoot, Root} from "react-dom/client";
-import App from "@/components/App.tsx";
+import App from "@/App.tsx";
 
 export function simulateFileSelection(fileInput: HTMLInputElement, fileName: string, content: string) {
   const file = new File([content], fileName, { type: 'text/plain' });

@@ -13,6 +13,10 @@ import {SiteConfig} from "@/config/siteConfig.ts";
 import {simulateFileSelection} from "@/utils/domUtils.tsx";
 import {marked} from "marked";
 import BackButton from "@/components/BackButton.tsx";
+import {createFileProvider, FileProvider, FileProviderType} from "@/core/fileProviderFactory.ts";
+import {faFolderPlus} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import FolderInput from "@/components/FolderInput.tsx";
 
 type AppProps = {
   show: boolean,
@@ -21,6 +25,7 @@ type AppProps = {
 }
 
 export default function App({ show, onClose, config } : AppProps) {
+  const [fileProvider, setFileProvider] = useState<FileProvider | null>(null)
   const [url, setUrl] = useState('');
   const [files, setFiles] = useState<FileInfo[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -55,17 +60,14 @@ export default function App({ show, onClose, config } : AppProps) {
     }
   }, [files]);
 
-  async function downloadRepo() {
-    if(!url) {
-      return;
-    }
-
+  async function loadSource(type: FileProviderType, source: string | FileSystemDirectoryHandle) {
     try {
       setSelectedFiles([])
       setIsLoading(true)
       setErrorMessage('');
-      const res = await sendMessage(RequestType.LoadRepo, { url });
-      setFiles(res.files)
+      const provider = await createFileProvider(type, source)
+      setFileProvider(provider)
+      setFiles(provider.files)
     } catch (e: any) {
       setErrorMessage(e.message)
     } finally {
@@ -76,7 +78,7 @@ export default function App({ show, onClose, config } : AppProps) {
   const submitFileNames = async () => {
     try {
       setErrorMessage('');
-      const { content, root } = await sendMessage(RequestType.CompilePrompt, { fileNames: selectedFiles, url })
+      const { content, root } = await fileProvider!.compilePrompt(selectedFiles)
       const textInput = document.querySelector(config.inputSelector)!
       const fileInput = document.querySelector(config.fileInputSelector) as HTMLInputElement | null;
       if(fileInput) {
@@ -90,8 +92,17 @@ export default function App({ show, onClose, config } : AppProps) {
     }
   }
 
+  async function downloadRepo() {
+    if (!url) return;
+    await loadSource('repo', url);
+  }
+
+  async function onSelectDir(dirHandle: FileSystemDirectoryHandle) {
+    await loadSource('filesystem', dirHandle);
+  }
+
   const preview = async () => {
-    const { content } = await sendMessage(RequestType.CompilePrompt, { fileNames: selectedFiles, url })
+    const { content } = await fileProvider!.compilePrompt(selectedFiles)
     setPrompt(content)
     setShowPreview(true)
   }
@@ -120,18 +131,23 @@ export default function App({ show, onClose, config } : AppProps) {
         }
         {
           (!files.length && !isLoading) && (<div className=" px-7 mb-5">
-            <label htmlFor="repo_url" className="block mb-2 text-sm font-medium text-gray-900">Repo URL</label>
-            <input type="text"
-                   id="repo_url"
-                   ref={inputRef}
-                   onChange={(e) => setUrl(e.target.value)}
-                   value={url}
-                   tabIndex={0}
-                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-3"
-                   placeholder="http://github.com/"
-                   required
-            />
-            <Button onClick={downloadRepo}>Submit</Button>
+
+            <FolderInput onSelect={onSelectDir} onErrorMessage={setErrorMessage}/>
+
+            <label htmlFor="repo_url" className="block mb-2 mt-8 text-sm text-gray-900">Or import from Github</label>
+            <div className="relative mb-8">
+              <input type="text" id="repo_url"
+                     ref={inputRef}
+                     value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                     className="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                     placeholder="http://github.com/" required/>
+              <button type="button"
+                      onClick={downloadRepo}
+                      className="text-white absolute end-2 bottom-[7px] bg-blue-700 hover:bg-blue-800 focus:outline-none rounded-lg text-sm px-3 py-1.5 ">Import
+              </button>
+            </div>
+
           </div>)
         }
         <div className="">
@@ -140,18 +156,21 @@ export default function App({ show, onClose, config } : AppProps) {
                   <FileTree onCheckedChange={setSelectedFiles} checked={selectedFiles} files={files}/>
               </div>
               <div className="border-t border-gray-200 p-3 px-4 flex justify-between items-center">
-                  <p className="text-xs ml-3 text-gray-800">{selectedFiles.length} files {totalSelectedBytes > 0 ? `(${bytesToSize(totalSelectedBytes)})` : ''} selected, {files.length} files total</p>
-                <div>
-                  {selectedFiles.length > 0 && <Button className="mr-2" type="secondary" disabled={selectedFiles.length === 0} onClick={preview}>Preview</Button>}
-                    <Button disabled={selectedFiles.length === 0} onClick={submitFileNames}>Attach</Button>
-                </div>
+                  <p className="text-xs ml-3 text-gray-800">{selectedFiles.length} files {totalSelectedBytes > 0 ? `(${bytesToSize(totalSelectedBytes)})` : ''} selected, {files.length} files
+                      total</p>
+                  <div>
+                    {selectedFiles.length > 0 &&
+                        <Button className="mr-2" type="secondary" disabled={selectedFiles.length === 0}
+                                onClick={preview}>Preview</Button>}
+                      <Button disabled={selectedFiles.length === 0} onClick={submitFileNames}>Attach</Button>
+                  </div>
               </div>
           </div>}
         </div>
 
-        <PreviewModal content={prompt} show={showPreview} onClose={() => setShowPreview(false)} />
+        <PreviewModal content={prompt} show={showPreview} onClose={() => setShowPreview(false)}/>
       </Modal>
-      <Toaster />
+      <Toaster/>
     </div>
   )
 }
