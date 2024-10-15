@@ -2,6 +2,7 @@ import {FileInfo, RequestType} from "@/types.ts";
 import { sendMessage } from "@/utils/messaging.ts";
 import LocalFileProvider from "@/core/LocalFileProvider.ts";
 import fileListReducer from "@/core/fileListReducer.ts";
+import {getMimeType} from "@zip.js/zip.js";
 
 export type FileProvider = {
   files: FileInfo[],

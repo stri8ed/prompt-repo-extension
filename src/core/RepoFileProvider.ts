@@ -1,5 +1,6 @@
 import {BlobReader, Entry, getMimeType, TextWriter, ZipReader} from "@zip.js/zip.js";
 import axios from "axios";
+import {isTextFile} from "@/utils/fileUtils.ts";
 
 export default class RepoFileProvider {
   private readonly url: string;
@@ -18,7 +19,7 @@ export default class RepoFileProvider {
 
   public async getTextFileInfo() {
     const entries = await this.reader!.getEntries();
-    const texts = entries.filter(e => getMimeType(e.filename).includes('text'))
+    const texts = entries.filter(e => isTextFile(e.filename))
     return texts.map(e => {
       return {
         name: e.filename,

@@ -1,5 +1,7 @@
 import { FileInfo } from "@/types.ts";
-import { getMimeType } from "@zip.js/zip.js";
+import {isTextFile} from "@/utils/fileUtils.ts";
+
+const EXCLUDE_DIRS = ['node_modules', 'bin', 'vendor'];
 
 export default class LocalFileProvider {
   private rootHandle: FileSystemDirectoryHandle | null = null;
@@ -30,14 +32,17 @@ export default class LocalFileProvider {
 
       if (handle.kind === "file") {
         const file = await handle.getFile();
-        const mime = getMimeType(entryPath);
-        if (mime.includes('text')) {
+        if (isTextFile(entryPath)) {
           fileInfos.push({
             name: fullPath,
             byteLength: file.size
           });
         }
       } else if (handle.kind === "directory") {
+        // Check if the directory is in the root and should be excluded
+        if (path === "" && EXCLUDE_DIRS.includes(name)) {
+          continue;
+        }
         await this.traverseDirectory(handle, entryPath, fileInfos);
       }
     }
@@ -67,6 +72,9 @@ export default class LocalFileProvider {
     let currentHandle: FileSystemDirectoryHandle = this.rootHandle!;
 
     for (let i = 0; i < parts.length - 1; i++) {
+      if (i === 0 && EXCLUDE_DIRS.includes(parts[i])) {
+        return null;
+      }
       currentHandle = await currentHandle.getDirectoryHandle(parts[i]);
     }
 
