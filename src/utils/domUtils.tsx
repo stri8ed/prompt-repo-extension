@@ -50,6 +50,7 @@ export function observeElement(
 export function makeExtensionButton(className: string, onClick: (e: MouseEvent) => void) {
   const button = document.createElement('button');
   button.innerHTML = `<span class="${className}">${GithubIcon()}</span>`
+  button.setAttribute('aria-label', 'Attach Repo');
   button.addEventListener('click', onClick);
   return button;
 }
