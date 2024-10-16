@@ -6,7 +6,7 @@
     "build": "vite build --mode production",
     "build:dev": "vite build --mode development",
     "dev": "vite",
-    "package": "npm run build && cd dist && zip -r -FS ../package.zip * -x '*.zip'"
+    "package": "npm run build && cd dist && zip -r -FS ../package.zip *"
   },
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
