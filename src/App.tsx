@@ -17,6 +17,7 @@ import {faFolderPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FolderInput from "@/components/FolderInput.tsx";
 import {sendMessage} from "@/utils/messaging.ts";
+import SearchInput from "@/components/SearchInput.tsx";
 
 type AppProps = {
   show: boolean,
@@ -30,6 +31,7 @@ export default function App({ show, onClose, config } : AppProps) {
   const [fileProvider, setFileProvider] = useState<FileProvider | null>(null)
   const [url, setUrl] = useState('');
   const [files, setFiles] = useState<FileInfo[]>([])
+  const [search, setSearch] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [prompt, setPrompt] = useState('')
@@ -56,7 +58,7 @@ export default function App({ show, onClose, config } : AppProps) {
 
   useEffect(() => {
     if(files.length && fileProvider?.type === 'repo') {
-      const interval = setInterval(async () =>
+      const interval = setInterval(() =>
         sendMessage(RequestType.KeepAlive, { url }),
         KEEL_ALIVE_INTERVAL
       );
@@ -69,6 +71,7 @@ export default function App({ show, onClose, config } : AppProps) {
       setSelectedFiles([])
       setIsLoading(true)
       setErrorMessage('');
+      setSearch('');
       const provider = await createFileProvider(type, source)
       setFileProvider(provider)
       setFiles(provider.files)
@@ -123,6 +126,7 @@ export default function App({ show, onClose, config } : AppProps) {
           <div className="flex-grow flex">
             <h3 className="text-lg font-medium ml-2">{files.length ? 'Select files': 'Import Repository'}</h3>
           </div>
+          { files.length > 0 && <SearchInput value={search} onChange={setSearch} className='mr-2' />}
           <CloseButton onClick={close} />
         </div>
         {
@@ -156,7 +160,12 @@ export default function App({ show, onClose, config } : AppProps) {
         <div className="">
           {files.length > 0 && <div>
               <div className="px-4 overflow-auto max-h-[50vh] mb-4">
-                  <FileTree onCheckedChange={setSelectedFiles} checked={selectedFiles} files={files}/>
+                  <FileTree
+                      search={search}
+                      onCheckedChange={setSelectedFiles}
+                      checked={selectedFiles}
+                      files={files}
+                  />
               </div>
               <div className="border-t border-gray-200 p-3 px-4 flex justify-between items-center">
                   <p className="text-xs ml-3 text-gray-800">{selectedFiles.length} files {totalSelectedBytes > 0 ? `(${bytesToSize(totalSelectedBytes)})` : ''} selected, {files.length} files

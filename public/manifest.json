@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Prompt Repo - ChatGPT & Claude",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Convert GitHub repos and local directories into AI chat prompts. Select files, feed content to ChatGPT and Claude.",
   "permissions": [],
   "background": {
