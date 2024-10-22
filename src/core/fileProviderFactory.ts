@@ -6,6 +6,7 @@ import {getMimeType} from "@zip.js/zip.js";
 
 export type FileProvider = {
   files: FileInfo[],
+  type: FileProviderType,
   compilePrompt: (fileNames: string[]) => Promise<{ root: string, content: string }>
 }
 
@@ -19,6 +20,7 @@ export async function createFileProvider(
     const { files } = await sendMessage(RequestType.LoadRepo, { url: source as string });
     return {
       files,
+      type,
       compilePrompt: (fileNames: string[]) => sendMessage(RequestType.CompilePrompt, { fileNames, url: source as string })
     };
   } else {
@@ -27,6 +29,7 @@ export async function createFileProvider(
     const files = await extractor.getTextFileInfo();
     return {
       files,
+      type,
       async compilePrompt(fileNames: string[]) {
         const contents = await extractor.getFileContents(fileNames);
         return fileListReducer(contents);

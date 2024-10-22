@@ -3,7 +3,6 @@ import React, {useEffect, useMemo, useRef, useState} from "react";
 import FileTree from "@/components/FileTree.tsx";
 import Button from "@/components/Button.tsx";
 import {FileInfo, RequestType} from "@/types.ts";
-import {keepAlive, sendMessage} from "@/utils/messaging.ts";
 import {bytesToSize} from "@/utils/textUtils.ts";
 import Spinner from "@/components/Spinner.tsx";
 import CloseButton from "@/components/CloseButton.tsx";
@@ -17,12 +16,15 @@ import {createFileProvider, FileProvider, FileProviderType} from "@/core/filePro
 import {faFolderPlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FolderInput from "@/components/FolderInput.tsx";
+import {sendMessage} from "@/utils/messaging.ts";
 
 type AppProps = {
   show: boolean,
   onClose: () => void,
   config: SiteConfig
 }
+
+const KEEL_ALIVE_INTERVAL = 3500; // prevent service worker from being killed
 
 export default function App({ show, onClose, config } : AppProps) {
   const [fileProvider, setFileProvider] = useState<FileProvider | null>(null)
@@ -53,9 +55,11 @@ export default function App({ show, onClose, config } : AppProps) {
   }, [errorMessage]);
 
   useEffect(() => {
-    // After 30 seconds of inactivity, chrome may kill the service worker
-    if(files.length) {
-      const interval = keepAlive(5000)
+    if(files.length && fileProvider?.type === 'repo') {
+      const interval = setInterval(async () =>
+        sendMessage(RequestType.KeepAlive, { url }),
+        KEEL_ALIVE_INTERVAL
+      );
       return () => clearInterval(interval)
     }
   }, [files]);

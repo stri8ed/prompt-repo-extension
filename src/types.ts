@@ -10,7 +10,7 @@ declare global {
 export enum RequestType {
   LoadRepo = 'load-repo',
   CompilePrompt = 'compile-prompt',
-  Ping = 'ping',
+  KeepAlive = 'keep-alive',
 }
 
 export type FileInfo = {
@@ -27,8 +27,8 @@ export interface MessageMap {
     request: { fileNames: string[], url: string };
     response: { content: string, root: string };
   };
-  [RequestType.Ping]: {
-    request: {};
-    response: { pong: string };
+  [RequestType.KeepAlive]: {
+    request: { url: string };
+    response: {};
   };
 }

@@ -39,9 +39,3 @@ export function addMessageListener<T extends RequestType>(
     }
   });
 }
-
-export function keepAlive(interval: number) {
-  return setInterval(async () => {
-    await sendMessage(RequestType.Ping, {});
-  }, interval);
-}

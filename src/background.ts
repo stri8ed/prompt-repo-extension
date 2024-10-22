@@ -12,22 +12,27 @@ async function getRepoUrl(url: string) {
   return getDownloadUrl(repo, branch);
 }
 
-addMessageListener(RequestType.LoadRepo, async ({ url }, sender) => {
+async function downloadRepo(url: string) {
   const repoUrl = await getRepoUrl(url);
+  const extractor = new RepoFileProvider(repoUrl);
+  repoExtractors.set(url, extractor);
+  await extractor.loadContents();
+  return extractor;
+}
+
+addMessageListener(RequestType.LoadRepo, async ({ url }, sender) => {
   let extractor = repoExtractors.get(url);
   if(!extractor) {
-    extractor = new RepoFileProvider(repoUrl);
-    repoExtractors.set(url, extractor);
-    await extractor.loadContents();
+    extractor = await downloadRepo(url);
   }
   const files = await extractor.getTextFileInfo();
   return { files };
 });
 
 addMessageListener(RequestType.CompilePrompt, async ({ fileNames, url }, sender) => {
-  const extractor = repoExtractors.get(url);
+  let extractor = repoExtractors.get(url);
   if(!extractor) {
-    throw new Error('No repo loaded');
+    extractor = await downloadRepo(url);
   }
   const entries = await extractor.getEntries();
   const filteredEntries = entries.filter(e => fileNames.includes(e.filename));
@@ -35,7 +40,10 @@ addMessageListener(RequestType.CompilePrompt, async ({ fileNames, url }, sender)
   return fileListReducer(contents);
 });
 
-addMessageListener(RequestType.Ping, async ({}, _) => {
-  return { pong: 'pong' };
+addMessageListener(RequestType.KeepAlive, async ({ url }, _) => {
+  if(!repoExtractors.has(url)) {
+    await downloadRepo(url);
+  }
+  return {};
 })
 
