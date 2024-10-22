@@ -10,14 +10,20 @@ type SearchInputProps = {
 };
 
 const SearchInput = ({
-                       value,
-                       onChange,
-                       placeholder = 'Search...',
-                       className = ''
-                     }: SearchInputProps) => {
+   value,
+   onChange,
+   placeholder = 'Search...',
+   className = ''
+ }: SearchInputProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (value) {
+      setIsExpanded(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (isExpanded && inputRef.current) {
