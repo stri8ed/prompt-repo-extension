@@ -19,7 +19,8 @@
     "axios": "^1.7.7",
     "marked": "^14.1.2",
     "react-checkbox-tree": "^1.8.0",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "use-debounce": "^10.0.4"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.25",

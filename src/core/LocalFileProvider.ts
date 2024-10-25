@@ -1,7 +1,15 @@
 import { FileInfo } from "@/types.ts";
 import {isTextFile} from "@/utils/fileUtils.ts";
 
-const EXCLUDE_DIRS = ['node_modules', 'bin', 'vendor', '.git', 'vendor', 'venv'];
+const EXCLUDE_DIRS = [
+  'node_modules',
+  'bin',
+  'vendor',
+  '.git',
+  'vendor',
+  'venv',
+  'site-packages'
+];
 
 export default class LocalFileProvider {
   private rootHandle: FileSystemDirectoryHandle | null = null;

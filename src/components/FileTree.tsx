@@ -16,6 +16,7 @@ import {
   faFile
 } from "@fortawesome/free-regular-svg-icons";
 import { FileInfo } from "@/types.ts";
+import {useDebounce} from "use-debounce";
 
 type FileTreeProps = {
   files: FileInfo[]
@@ -105,12 +106,13 @@ const icons = {
 
 export default function FileTree({ files, checked, onCheckedChange, search }: FileTreeProps) {
   const [expanded, setExpanded] = useState<string[]>([]);
-  const root = useMemo(() => buildFileTree(files, search), [files, search]);
+  const [searchValue] = useDebounce(search, 350, { leading: false });
+  const root = useMemo(() => buildFileTree(files, searchValue), [files, searchValue]);
 
   useEffect(() => {
     if (!root) return;
 
-    if (!search) {
+    if (!searchValue) {
       setExpanded([root.value]);
       return;
     }
@@ -122,7 +124,7 @@ export default function FileTree({ files, checked, onCheckedChange, search }: Fi
     };
     collectPaths(root);
     setExpanded(Array.from(paths));
-  }, [search, root]);
+  }, [searchValue, root]);
 
   if (!root) {
     return (
