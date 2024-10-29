@@ -3,10 +3,12 @@ import {createOrUpdateApp, makeExtensionButton, observeElement} from '@/utils/do
 
 export function initializeClaude(config: SiteConfig) {
   function insertButtonAfterElement(el: Element) {
-    const button = makeExtensionButton('inline-block w-4 h-4 flex', (e) => {
-      renderApp(true);
-      e.preventDefault()
-      return false;
+    const button = makeExtensionButton(
+      'inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-bg-500/40',
+      'w-4 h-4',
+      (e) => {
+        renderApp(true);
+        e.preventDefault()
     })
 
     el.parentElement!.appendChild(button);

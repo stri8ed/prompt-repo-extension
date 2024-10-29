@@ -47,9 +47,13 @@ export function observeElement(
   return () => observer.disconnect();
 }
 
-export function makeExtensionButton(className: string, onClick: (e: MouseEvent) => void) {
+export function makeExtensionButton(
+  className: string,
+  iconClassName: string,
+  onClick: (e: MouseEvent) => void
+) {
   const button = document.createElement('button');
-  button.innerHTML = `<span class="${className}">${GithubIcon()}</span>`
+  button.innerHTML = `<span class="${className}"><span class="${iconClassName}">${GithubIcon()}</span></span>`
   button.setAttribute('aria-label', 'Attach Repo');
   button.addEventListener('click', onClick);
   return button;

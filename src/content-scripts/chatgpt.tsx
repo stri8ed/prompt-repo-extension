@@ -4,10 +4,12 @@ import {createOrUpdateApp, makeExtensionButton, observeElement} from '@/utils/do
 export function initializeChatGPT(config: SiteConfig) {
 
   function insertButtonAfterElement(el: Element) {
-    const button = makeExtensionButton('inline-block w-6 h-6 mr-1', (e) => {
-      renderApp(true);
-      e.preventDefault()
-      return false;
+    const button = makeExtensionButton(
+      'inline-flex items-center justify-center h-8 w-8 rounded-lg rounded-bl-xl hover:bg-black/10 text-token-text-primary dark:text-white focus-visible:outline-black dark:focus-visible:outline-white',
+      'w-5 h-5',
+      (e) => {
+        renderApp(true);
+        e.preventDefault()
     })
     const parentFlexCol = el?.closest('.button-container, .flex-col')!
     parentFlexCol.appendChild(button);
