@@ -55,6 +55,7 @@ export function makeExtensionButton(
   const button = document.createElement('button');
   button.innerHTML = `<span class="${className}"><span class="${iconClassName}">${GithubIcon()}</span></span>`
   button.setAttribute('aria-label', 'Attach Repo');
+  button.setAttribute('title', 'Attach Repo');
   button.addEventListener('click', onClick);
   return button;
 }
