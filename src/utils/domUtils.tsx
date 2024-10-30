@@ -60,6 +60,14 @@ export function makeExtensionButton(
   return button;
 }
 
+export function scrollToBottomAndFocus(el: HTMLElement): void {
+  el.scrollTop = el.scrollHeight;
+  const sel = window.getSelection();
+  sel?.selectAllChildren(el);
+  sel?.collapseToEnd();
+  el.focus();
+}
+
 export function createOrUpdateApp(config: SiteConfig, show: boolean): (show: boolean) => void {
   let root: Root | null = null;
   let container: HTMLDivElement | null = null;

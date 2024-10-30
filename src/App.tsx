@@ -9,7 +9,7 @@ import CloseButton from "@/components/CloseButton.tsx";
 import PreviewModal from "@/components/PreviewModal.tsx";
 import toast, {Toaster} from "react-hot-toast";
 import {SiteConfig} from "@/config/siteConfig.ts";
-import {simulateFileSelection} from "@/utils/domUtils.tsx";
+import {scrollToBottomAndFocus, simulateFileSelection} from "@/utils/domUtils.tsx";
 import {marked} from "marked";
 import BackButton from "@/components/BackButton.tsx";
 import {createFileProvider, FileProvider, FileProviderType} from "@/core/fileProviderFactory.ts";
@@ -91,7 +91,8 @@ export default function App({ show, onClose, config } : AppProps) {
       if(fileInput) {
         simulateFileSelection(fileInput, `${root}.txt`, content);
       } else {
-        textInput.innerHTML = marked.parse(content) as string
+        textInput.innerHTML = (marked.parse(content) as string) + '<br>';
+        scrollToBottomAndFocus(textInput as HTMLElement);
       }
       onClose()
     } catch (e: any) {
