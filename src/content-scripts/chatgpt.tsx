@@ -11,9 +11,14 @@ export function initializeChatGPT(config: SiteConfig) {
         renderApp(true);
         e.preventDefault()
     })
-    const parentFlexCol = el?.closest('.button-container, .flex-col')!
-    parentFlexCol.appendChild(button);
-    parentFlexCol.classList.add('button-container');
+    let parent: Element
+    if(el.matches(config.buttonTargetSelector[0])) {
+      parent = el.parentElement!;
+      parent.classList.add('flex', 'flex-row')
+    } else {
+      parent = el.closest('.flex-col')!;
+    }
+    parent.appendChild(button);
     return button;
   }
 
