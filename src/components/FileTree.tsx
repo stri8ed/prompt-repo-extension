@@ -31,17 +31,20 @@ type TreeNode = {
   children?: TreeNode[]
 }
 
-const buildFileTree = (files: FileInfo[], search: string): TreeNode | null => {
-  if (!files.length) return null;
+type FileTreeResult = [TreeNode | null, string[]];
+
+const buildFileTree = (files: FileInfo[], search: string): FileTreeResult => {
+  if (!files.length) return [null, []];
 
   const searchLower = search.toLowerCase();
   const filteredFiles = search ?
     files.filter(f => f.name.toLowerCase().includes(searchLower)) :
     files;
 
-  if (!filteredFiles.length) return null;
+  if (!filteredFiles.length) return [null, []];
 
   const tree: { [key: string]: TreeNode } = {};
+  const matchedFiles = filteredFiles.map(f => f.name);
 
   filteredFiles.forEach(file => {
     const parts = file.name.split('/');
@@ -76,7 +79,8 @@ const buildFileTree = (files: FileInfo[], search: string): TreeNode | null => {
         : aIsFolder ? -1 : 1;
     });
 
-  return sortNodes(Object.values(tree).filter(node => !node.value.includes('/')))[0] || null;
+  const root = sortNodes(Object.values(tree).filter(node => !node.value.includes('/')))[0] || null;
+  return [root, matchedFiles];
 };
 
 const highlightSearchText = (text: string, search: string): React.ReactNode => {
@@ -107,7 +111,7 @@ const icons = {
 export default function FileTree({ files, checked, onCheckedChange, search }: FileTreeProps) {
   const [expanded, setExpanded] = useState<string[]>([]);
   const [searchValue] = useDebounce(search, 350, { leading: false });
-  const root = useMemo(() => buildFileTree(files, searchValue), [files, searchValue]);
+  const [root, matchedFiles] = useMemo(() => buildFileTree(files, searchValue), [files, searchValue]);
 
   useEffect(() => {
     if (!root) return;
@@ -135,13 +139,20 @@ export default function FileTree({ files, checked, onCheckedChange, search }: Fi
     );
   }
 
+  const handleCheck = (newChecked: string[]) => {
+    onCheckedChange([
+      ...newChecked,
+      ...checked.filter(c => !newChecked.includes(c) && !matchedFiles.includes(c))
+    ]);
+  }
+
   return (
     <CheckboxTree
       icons={icons}
       nodes={[root]}
       checked={checked}
       expanded={expanded}
-      onCheck={onCheckedChange}
+      onCheck={handleCheck}
       onExpand={setExpanded}
       showExpandAll={false}
     />

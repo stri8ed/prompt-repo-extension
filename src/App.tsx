@@ -38,6 +38,7 @@ export default function App({ show, onClose, config } : AppProps) {
   const [showPreview, setShowPreview] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const inputRef = useRef<HTMLInputElement>(null);
+
   const totalSelectedBytes = useMemo(() => {
     return selectedFiles.reduce((prev, curr) => {
       return prev + files.find(f => f.name === curr)?.byteLength!
