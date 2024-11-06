@@ -18,8 +18,9 @@ export function parseGitHubUrl(url: string): GitHubRepo {
 
 export async function getPrimaryBranch(repo: GitHubRepo) {
   try {
-    await axios.head(getDownloadUrl(repo, 'master'));
-    return 'master';
+    const { data } = await axios.get(`https://github.com/${repo.owner}/${repo.name}`);
+    const matches = data.match(/"defaultBranch": *"([^"]+)"/);
+    return matches ? matches[1] : 'main';
   } catch (e) {
     return 'main';
   }
