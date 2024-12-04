@@ -5,7 +5,7 @@ const TEXT_FILE_EXTENSIONS = [
   '.c', '.cpp', '.h', '.hpp', '.cs', '.go', '.rs', '.swift', '.kt', '.scala',
   '.html', '.css', '.scss', '.sass', '.less', '.json', '.xml', '.yaml', '.yml',
   '.ini', '.conf', '.sh', '.bash', '.zsh', '.fish', '.ps1', '.bat', '.cmd',
-  '.sql', '.graphql', '.prisma', '.env'
+  '.sql', '.graphql', '.prisma', '.env', 'Dockerfile'
 ];
 
 export function isTextFile(fileName: string): boolean {
