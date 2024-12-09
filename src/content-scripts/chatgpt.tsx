@@ -27,10 +27,7 @@ export function initializeChatGPT(config: SiteConfig) {
   (async () => {
     renderApp(false);
     let button: Element|null = null;
-    observeElement(config.buttonTargetSelector, _ => {
-      const primary = document.querySelector(config.buttonTargetSelector[0]);
-      const secondary = document.querySelector(config.buttonTargetSelector[1]);
-      const el = (primary || secondary)!;
+    observeElement(config.buttonTargetSelector, el => {
       if(button) {
         button.remove();
       }

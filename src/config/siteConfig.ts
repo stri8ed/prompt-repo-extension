@@ -13,8 +13,7 @@ const siteConfigs: SiteConfig[] = [
     inputSelector: '#prompt-textarea',
     urlPattern: /chatgpt/,
     buttonTargetSelector: [
-      '[aria-label="Attach files"]', // not available in O-1 models
-      '[data-testid="send-button"], [aria-label="Send prompt"]'
+      '[aria-label*="Attach files"]'
     ],
     fileInputSelector: '[type="file"]'
   },
