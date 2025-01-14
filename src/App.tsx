@@ -25,7 +25,7 @@ type AppProps = {
   config: SiteConfig
 }
 
-const KEEL_ALIVE_INTERVAL = 3500; // prevent service worker from being killed
+const KEEP_ALIVE_INTERVAL = 3500; // prevent service worker from being killed
 
 export default function App({ show, onClose, config } : AppProps) {
   const [fileProvider, setFileProvider] = useState<FileProvider | null>(null)
@@ -61,7 +61,7 @@ export default function App({ show, onClose, config } : AppProps) {
     if(files.length && fileProvider?.type === 'repo') {
       const interval = setInterval(() =>
         sendMessage(RequestType.KeepAlive, { url }),
-        KEEL_ALIVE_INTERVAL
+        KEEP_ALIVE_INTERVAL
       );
       return () => clearInterval(interval)
     }
