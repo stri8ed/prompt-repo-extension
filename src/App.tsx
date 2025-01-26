@@ -9,12 +9,10 @@ import CloseButton from "@/components/CloseButton.tsx";
 import PreviewModal from "@/components/PreviewModal.tsx";
 import toast, {Toaster} from "react-hot-toast";
 import {SiteConfig} from "@/config/siteConfig.ts";
-import {scrollToBottomAndFocus, simulateFileSelection} from "@/utils/domUtils.tsx";
+import {scrollToBottomAndFocus, simulateEnterKey, simulateFileSelection} from "@/utils/domUtils.tsx";
 import {marked} from "marked";
 import BackButton from "@/components/BackButton.tsx";
 import {createFileProvider, FileProvider, FileProviderType} from "@/core/fileProviderFactory.ts";
-import {faFolderPlus} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FolderInput from "@/components/FolderInput.tsx";
 import {sendMessage} from "@/utils/messaging.ts";
 import SearchInput from "@/components/SearchInput.tsx";
@@ -88,12 +86,18 @@ export default function App({ show, onClose, config } : AppProps) {
       setErrorMessage('');
       const { content, root } = await fileProvider!.compilePrompt(selectedFiles)
       const textInput = document.querySelector(config.inputSelector)!
-      const fileInput = document.querySelector(config.fileInputSelector) as HTMLInputElement | null;
+      const fileInput = document.querySelector(config.fileInputSelector!) as HTMLInputElement | null;
       if(fileInput) {
         simulateFileSelection(fileInput, `${root}.txt`, content);
       } else {
-        textInput.innerHTML = (marked.parse(content) as string) + '<br>';
-        scrollToBottomAndFocus(textInput as HTMLElement);
+        if(textInput instanceof HTMLTextAreaElement) {
+          textInput.value += content + '\n';
+          simulateEnterKey(textInput);
+        } else {
+          textInput.innerHTML = (marked.parse(content) as string) + '<br>';
+          scrollToBottomAndFocus(textInput as HTMLElement);
+        }
+
       }
       onClose()
     } catch (e: any) {

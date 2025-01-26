@@ -33,7 +33,7 @@ export default function ({ content, show, onClose}: PreviewModalProps) {
           type="button"
           title="Copy"
           onClick={() => copyToClipboard(content)}
-          className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center"
+          className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm !w-8 !h-8 inline-flex justify-center items-center"
         >
           <FontAwesomeIcon icon={faCopy} />
           <span className="sr-only">Copy</span>

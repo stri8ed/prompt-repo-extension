@@ -4,7 +4,7 @@ export default function ({ onClick }: { onClick: () => void }) {
   return (
     <button type="button" title="Back"
             onClick={onClick}
-            className="bg-transparent hover:bg-gray-200 text-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center"
+            className="bg-transparent hover:bg-gray-200 text-gray-400 hover:text-gray-900 rounded-lg text-sm !w-8 !h-8 inline-flex justify-center items-center"
             >
       <svg aria-labelledby="svg-inline--fa-title-vvoASVEMRUhw" data-prefix="fas" data-icon="arrow-left"
            className="svg-inline--fa fa-arrow-left w-4 h-4" role="img" xmlns="http://www.w3.org/2000/svg"

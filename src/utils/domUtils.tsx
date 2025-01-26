@@ -60,6 +60,26 @@ export function makeExtensionButton(
   return button;
 }
 
+export function simulateEnterKey(element: HTMLInputElement | HTMLTextAreaElement) {
+  element.focus();
+  const events = [
+    new KeyboardEvent('keypress', {
+      key: 'Enter',
+      code: 'Enter',
+      keyCode: 13,
+      which: 13,
+      bubbles: true,
+      cancelable: true
+    }),
+    new Event('input', {
+      bubbles: true,
+      cancelable: true
+    })
+  ];
+
+  events.forEach(event => element.dispatchEvent(event));
+}
+
 export function scrollToBottomAndFocus(el: HTMLElement): void {
   el.scrollTop = el.scrollHeight;
   const sel = window.getSelection();
