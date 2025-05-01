@@ -9,6 +9,9 @@ export default {
 
         },
     },
+    corePlugins: {
+        preflight: true,
+    },
     plugins: [
         typography,
     ],

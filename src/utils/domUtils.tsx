@@ -48,16 +48,19 @@ export function observeElement(
 }
 
 export function makeExtensionButton(
-  className: string,
-  iconClassName: string,
-  onClick: (e: MouseEvent) => void
+    className: string,
+    iconClassName: string,
+    onClick: (e: MouseEvent) => void
 ) {
   const button = document.createElement('button');
-  button.innerHTML = `<span class="${className}"><span class="${iconClassName}">${GithubIcon()}</span></span>`
+  button.innerHTML = `<span class="${className}"><span class="${iconClassName}">${GithubIcon()}</span></span>`;
   button.setAttribute('aria-label', 'Attach Repo');
   button.setAttribute('title', 'Attach Repo');
   button.addEventListener('click', onClick);
-  return button;
+  const wrapper = document.createElement('span');
+  wrapper.className = "repo-prompt";
+  wrapper.appendChild(button);
+  return wrapper;
 }
 
 export function simulateEnterKey(element: HTMLInputElement | HTMLTextAreaElement) {

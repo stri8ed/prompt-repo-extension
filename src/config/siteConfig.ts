@@ -13,14 +13,14 @@ const siteConfigs: SiteConfig[] = [
     inputSelector: '#prompt-textarea',
     urlPattern: /chatgpt/,
     buttonTargetSelector: [
-      '[aria-label*="Attach files"]'
+      '[aria-label*="Upload files"]'
     ],
     fileInputSelector: '[type="file"]'
   },
   {
     name: 'Claude',
     urlPattern: /claude/,
-    buttonTargetSelector: ['[aria-label="Capture screenshot"]'],
+    buttonTargetSelector: ['[aria-controls="input-menu"]'],
     inputSelector: '[contenteditable="true"]',
     fileInputSelector: '[type="file"]'
   },
@@ -28,7 +28,7 @@ const siteConfigs: SiteConfig[] = [
     name: 'Google AI Studio',
     urlPattern: /aistudio\.google\.com/,
     buttonTargetSelector: ['[aria-label*="Insert assets"]'],
-    inputSelector: '[placeholder="Type something"]',
+    inputSelector: '[aria-label*="Type something"]',
     fileInputSelector: null
   }
 ];

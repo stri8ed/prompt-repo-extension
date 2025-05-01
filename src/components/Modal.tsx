@@ -47,10 +47,11 @@ export default function Modal({
 
     return (
         <Transition show={show} as={Fragment} leave="duration-200">
+
             <Dialog
                 as="div"
                 id="modal"
-                className="fixed  inset-0  overflow-y-auto  px-4 py-6 sm:px-0  z-50  transform transition-all"
+                className="repo-prompt fixed inset-0  overflow-y-auto  px-4 py-6 sm:px-0  z-50  transform transition-all"
                 onClose={close}
             >
                 <Transition.Child

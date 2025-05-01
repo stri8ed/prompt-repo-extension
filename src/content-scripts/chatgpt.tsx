@@ -5,7 +5,7 @@ export function initializeChatGPT(config: SiteConfig) {
 
   function insertButtonAfterElement(el: Element) {
     const button = makeExtensionButton(
-      'inline-flex items-center justify-center h-8 w-8 rounded-lg rounded-bl-xl hover:bg-black/10 text-token-text-primary dark:text-white focus-visible:outline-black dark:focus-visible:outline-white',
+      'ml-2 flex items-center justify-center h-9 rounded-full border border-token-border-default text-token-text-secondary w-9 can-hover:hover:bg-token-main-surface-secondary',
       'w-5 h-5',
       (e) => {
         renderApp(true);
