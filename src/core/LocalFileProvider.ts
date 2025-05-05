@@ -14,11 +14,86 @@ const EXCLUDE_DIRS = [
 export default class LocalFileProvider {
   private rootHandle: FileSystemDirectoryHandle | null = null;
   private rootName: string = '';
+  private gitignorePatterns: string[] = [];
 
   public async loadContents(directoryHandle: FileSystemDirectoryHandle) {
     this.rootHandle = directoryHandle;
     this.rootName = directoryHandle.name;
+
+    try {
+      const gitignoreHandle = await directoryHandle.getFileHandle('.gitignore');
+      const gitignoreFile = await gitignoreHandle.getFile();
+      const gitignoreContent = await gitignoreFile.text();
+      this.gitignorePatterns = this.parseGitignore(gitignoreContent);
+    } catch (error) {
+      this.gitignorePatterns = [];
+    }
+    
     return this;
+  }
+
+  private parseGitignore(content: string): string[] {
+    return content
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line && !line.startsWith('#'))
+      .map(pattern => {
+        let processedPattern = pattern;
+
+        if (processedPattern.endsWith('/')) {
+          processedPattern = processedPattern.slice(0, -1);
+        }
+
+        if (processedPattern.startsWith('/')) {
+          processedPattern = processedPattern.substring(1);
+        }
+        
+        return processedPattern;
+      });
+  }
+
+  private isIgnored(path: string): boolean {
+    if (!path) return false;
+
+    const normPath = path.replace(/\\/g, '/');
+    const pathParts = normPath.split('/');
+
+    if (pathParts.length > 0 && EXCLUDE_DIRS.includes(pathParts[0])) {
+      return true;
+    }
+
+    for (const pattern of this.gitignorePatterns) {
+      if (normPath === pattern) return true;
+
+      // Convert gitignore pattern to regex pattern
+      const regexPattern = pattern
+          .replace(/\./g, '\\.')
+          .replace(/\*/g, '.*');
+
+      if (pattern.includes('/')) {
+        // Pattern with slashes must match from the project root
+        // Create a regex that matches the entire path
+        const regex = new RegExp(`^${regexPattern}($|/.*$)`);
+        if (regex.test(normPath)) {
+          return true;
+        }
+      } else {
+        // Patterns without slashes can match any part of the path
+        if (pathParts.includes(pattern)) {
+          return true;
+        }
+
+        // For wildcard patterns, check if any part matches
+        if (pattern.includes('*')) {
+          const regex = new RegExp(`^${regexPattern}$`);
+          if (pathParts.some(part => regex.test(part))) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   public async getTextFileInfo(): Promise<FileInfo[]> {
@@ -36,6 +111,12 @@ export default class LocalFileProvider {
   ) {
     for await (const [name, handle] of dirHandle.entries()) {
       const entryPath = path ? `${path}/${name}` : name;
+      
+      // Skip if the path matches gitignore patterns
+      if (this.isIgnored(entryPath)) {
+        continue;
+      }
+      
       const fullPath = `${this.rootName}/${entryPath}`;
 
       if (handle.kind === "file") {
@@ -47,9 +128,6 @@ export default class LocalFileProvider {
           });
         }
       } else if (handle.kind === "directory") {
-        if (path === "" && EXCLUDE_DIRS.includes(name)) {
-          continue;
-        }
         await this.traverseDirectory(handle, entryPath, fileInfos);
       }
     }
@@ -76,13 +154,20 @@ export default class LocalFileProvider {
       parts.shift();
     }
 
+    // Check if the path is in an ignored directory
+    if (this.isIgnored(parts.join('/'))) {
+      return null;
+    }
+
     let currentHandle: FileSystemDirectoryHandle = this.rootHandle!;
 
     for (let i = 0; i < parts.length - 1; i++) {
-      if (i === 0 && EXCLUDE_DIRS.includes(parts[i])) {
+      // No need to check EXCLUDE_DIRS here since we're using isIgnored
+      try {
+        currentHandle = await currentHandle.getDirectoryHandle(parts[i]);
+      } catch {
         return null;
       }
-      currentHandle = await currentHandle.getDirectoryHandle(parts[i]);
     }
 
     try {
